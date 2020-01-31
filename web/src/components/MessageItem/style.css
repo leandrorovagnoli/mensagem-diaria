@@ -1,0 +1,86 @@
+li.content-block {
+    position: relative;
+    margin-top: 30px; 
+    margin-left: 30px;
+    width: 300px;
+    background: #FFF;
+    border-radius: 10px;
+    padding: 15px 20px;
+    text-align: center;
+    display: inline-block;
+    flex-direction: row;
+    align-items: center;
+    transition: background 1s;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+li div.edit-delete-bar {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.7s;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    background: rgba(79, 113, 145);
+}
+
+li div.edit-delete-bar:hover {
+    opacity: 1;
+    transition: opacity 0.7s;
+    display: flex;
+    align-items: center;
+    background: rgba(79, 113, 145, 0.931);
+}
+
+li div.editDiv {
+    margin-left: 90px;
+    float:left;
+}
+
+li div.deleteDiv {
+    float:left;
+    margin-left: 50px;
+}
+
+.iconHover {
+    color: #FFF;
+    font-size: 40px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.iconHover:hover {
+    opacity: 0.4;
+    transition: opacity 0.5s ease;
+}
+
+li.content-block p {
+    text-align: justify;
+}
+
+li.content-block span {
+    color: #006699;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0px 0px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+li span[name="spanDate"] {
+    float:right;
+}
+
+li span[name="spanAuthor"] {
+    float:left;
+}
