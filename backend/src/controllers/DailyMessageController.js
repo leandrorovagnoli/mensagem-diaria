@@ -6,58 +6,104 @@ module.exports = {
         return res.json(dailyMessage);
     },
 
+    async getByDate(req, res) {
+        const dailyMessage = await DailyMessage.find({ dateMessage: req.params.dateMessage });
+        return res.json(dailyMessage);
+    },
+
     async store(req, res) {
-        const { author, message, day } = req.body;
+        const { author, dailyMessage, dateMessage } = req.body;
 
         const dailyMessageDb = await DailyMessage.findOne({
             $and: [
-                { $or: [{ day }, { message }] },
+                { $or: [{ dateMessage }, { dailyMessage }] },
             ]
-        });
+        },
+            function (err, obj) {
+                if (err)
+                    return res.json({ message: 'Houve uma falha ao atualizar. Entre em contato com o desenvolvedor!', err: err })
+            });
 
         if (!dailyMessageDb) {
             const newDailyMessage = {
                 author,
-                message,
-                day
+                dailyMessage,
+                dateMessage
             }
 
-            await DailyMessage.create(newDailyMessage);
+            await DailyMessage.create(newDailyMessage,
+                function (err, obj) {
+                    if (err)
+                        return res.json({ message: 'Houve uma falha ao atualizar. Entre em contato com o desenvolvedor!', err: err })
+                });
+
             return res.json({ message: 'Pensamento matinal criado com sucesso!' })
         }
 
         return res.json({ message: 'Pensamento matinal já existente!' })
     },
 
-    async update(req, res) {
-        const { author, message, day } = req.body;
+    async updateByDate(req, res) {
+        const { author, dailyMessage, dateMessage } = req.body;
 
-        const dailyMessageDb = await DailyMessage.findOne({ day })
+        const dailyMessageDb = await DailyMessage.findOne({ dateMessage: req.params.dateMessage },
+            function (err, obj) {
+                if (err)
+                    return res.json({ message: 'Houve uma falha ao atualizar. Entre em contato com o desenvolvedor!', err: err })
+            });
 
         if (dailyMessageDb) {
             const newDailyMessage = {
                 $set: {
                     author,
-                    message
+                    dailyMessage,
+                    dateMessage
                 }
             }
 
-            await DailyMessage.updateOne(dailyMessageDb, newDailyMessage);
+            await DailyMessage.updateOne(dailyMessageDb, newDailyMessage,
+                function (err, obj) {
+                    if (err)
+                        return res.json({ message: 'Houve uma falha ao atualizar. Entre em contato com o desenvolvedor!', err: err })
+                });
+
             return res.json({ message: 'Pensamento matinal atualizado com sucesso!' })
         }
 
         return res.json({ message: 'Pensamento matinal não encontrado!' })
     },
 
-    async delete(req, res) {
-        const { day } = req.body;
-        const dailyMessageDb = await DailyMessage.findOne({ day });
-        
-        if (dailyMessageDb) {
-            await DailyMessage.deleteOne(dailyMessageDb);
-            return res.json({ message: 'Pensamento removido com sucesso!' })
+    async deleteByDate(req, res) {
+        await DailyMessage.findOneAndDelete({ dateMessage: req.params.dateMessage })
+            .then(messageDeleted => {
+                if (messageDeleted)
+                    return res.json({ message: 'Pensamento removido com sucesso!' })
+                else
+                    return res.json({ message: 'Pensamento matinal não encontrado!' })
+            })
+            .catch(err => {
+                return res.json({ message: 'Houve uma falha ao remover. Entre em contato com o desenvolvedor!', err: err })
+            })
+    },
+
+    async deleteById(req, res) {
+        if (req.params.id) //delete by id
+        {
+            await DailyMessage.findByIdAndDelete(req.params.id)
+                .then(messageDeleted => {
+                    if (messageDeleted)
+                        return res.json({ message: 'Pensamento removido com sucesso!' })
+                    else
+                        return res.json({ message: 'Pensamento matinal não encontrado!' })
+                })
+                .catch(err => {
+                    return res.json({ message: 'Houve uma falha ao remover. Entre em contato com o desenvolvedor!', err: err })
+                })
+        }
+        else // delete by date
+        {
+
         }
 
-        return res.json({ message: 'Pensamento matinal não encontrado!' })
     }
 }

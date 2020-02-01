@@ -2,8 +2,16 @@ const mongoose = require('mongoose');
 
 const dailyMessage = new mongoose.Schema({
     author: String,
-    message: String,
-    day: Number
+    dailyMessage: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    dateMessage: {
+        type: Date,
+        required: true,
+        unique: true
+    }
 })
 
 module.exports = mongoose.model('DailyMessage', dailyMessage);
