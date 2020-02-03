@@ -1,30 +1,23 @@
 import React, { useState } from 'react';
 import './style.css';
-import api from '../../services/api';
 
-function MessageForm() {
+function MessageForm({ addDailyMessage }) {
     const [author, setAuthor] = useState('');
     const [dailyMessage, setDailyMessage] = useState('');;
-    const [date, setDate] = useState('');
+    const [dateMessage, setDateMessage] = useState('');
 
-    async function handleAddSubmit(e) {
+    function handleAddSubmit(e) {
         e.preventDefault();
 
-        await api.post('/', {
+        addDailyMessage({
             author,
             dailyMessage,
-            date
-        })
-        // .then(response => {
-        //     const { message } = response.data
-        //     console.log(message);
-        // }).catch(error => {
-        //     console.log(error.response);
-        // })
+            dateMessage
+        });
 
         setAuthor('');
         setDailyMessage('');
-        setDate('');
+        setDateMessage('');
     }
 
     return (
@@ -40,9 +33,9 @@ function MessageForm() {
                         onChange={e => setAuthor(e.target.value)} />
                 </div>
                 <div className="inputBlock">
-                    <label htmlFor="dailyMessage">Mensagem: </label>
-                    <textarea name="dailyMessage"
-                        id="dailyMessage"
+                    <label htmlFor="message">Mensagem: </label>
+                    <textarea name="message"
+                        id="message"
                         required
                         value={dailyMessage}
                         onChange={e => setDailyMessage(e.target.value)} />
@@ -53,10 +46,10 @@ function MessageForm() {
                         id="date"
                         name="date"
                         required
-                        value={date}
-                        onChange={e => setDate(e.target.value)} />
+                        value={dateMessage}
+                        onChange={e => setDateMessage(e.target.value)} />
                 </div>
-                <button type="submit"  >Salvar</button>
+                <button type="submit">Salvar</button>
             </form>
         </>
     )

@@ -1,7 +1,8 @@
-import React from 'react';
-import MessageForm from './components/MessageForm/index';
+import React, { useState, useEffect } from 'react';
+import EditMessageForm from './components/MessageForm/EditMessageForm';
+import AddMessageForm from './components/MessageForm/AddMessageForm';
 import MessageItem from './components/MessageItem/index';
-
+import api from './services/api';
 
 import './Global.css';
 import './App.css';
@@ -9,18 +10,75 @@ import './Main.css';
 
 
 function App() {
+  const [dailyMessages, setDailyMessages] = useState([]);
+  const [editing, setEditing] = useState(false);
+  const initialFormState = { _id: null, author: '', dailyMessage: '', dateMessage: '' }
+  const [currentDailyMessage, setCurrentDailyMessage] = useState(initialFormState)
+
+  useEffect(() => {
+    async function loadDailyMessages() {
+      const response = await api.get('/');
+
+      setDailyMessages(response.data);
+    }
+
+    loadDailyMessages();
+  })
+
+  async function addDailyMessage(data) {
+    const response = await api.post('/', data)
+
+    setDailyMessages([...dailyMessages, response.data]);
+  }
+
+  async function deleteDailyMessage(id) {
+    await api.delete(`/mensagem/${id}`);
+
+    setDailyMessages(dailyMessages.filter(dm => dm.id !== id));
+    setEditing(false);
+  }
+
+  async function updateDailyMessage(id, updatedDailyMessage) {
+    await api.put(`/mensagem/${id}`, updatedDailyMessage);
+
+    setDailyMessages(dailyMessages.map(dm => (dm._id === id ? updatedDailyMessage : dm)))
+  }
+
+  function editRow(editingDailyMessage) {
+    setEditing(true)
+    setCurrentDailyMessage({
+      _id: editingDailyMessage._id,
+      author: editingDailyMessage.author,
+      dateMessage: editingDailyMessage.dateMessage,
+      dailyMessage: editingDailyMessage.dailyMessage
+    })
+  }
+
   return (
     <>
       <div id="app">
         <main>
           <div className="topBox">
             <strong>Cadastro de Mensagem Diária</strong>
-            <MessageForm></MessageForm>
+            {!editing ?
+              (<>
+                <AddMessageForm addDailyMessage={addDailyMessage}></AddMessageForm>
+              </>
+              ) : (
+                <EditMessageForm
+                  updateDailyMessage={updateDailyMessage}
+                  setCurrentDailyMessage={setCurrentDailyMessage}
+                  currentDailyMessage={currentDailyMessage}
+                  setEditing={setEditing}></EditMessageForm>
+              )}
           </div>
         </main>
         <div className="content">
           <ul>
-            <MessageItem></MessageItem>
+            {
+              dailyMessages.map(item => (
+                <MessageItem key={item._id} data={item} deleteDailyMessage={deleteDailyMessage} editRow={editRow}></MessageItem>
+              ))}
           </ul>
         </div>
       </div>

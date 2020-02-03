@@ -8,7 +8,8 @@ const app = express();
 mongoose.connect('mongodb+srv://leolandrooo:pwduser@cluster0-keodn.mongodb.net/pensamentosMatinais?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
 });
 
 app.use(cors());
