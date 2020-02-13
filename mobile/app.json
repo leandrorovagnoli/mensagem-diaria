@@ -6,8 +6,7 @@
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -25,6 +24,16 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.leolandrooo.mensagemdiaria",
+      "versionCode": 1
+    },
+    "androidNavigationBar": {
+      "backgroundColor": "#4b7e96"
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#4b7e96"
     }
   }
 }
