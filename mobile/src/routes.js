@@ -15,10 +15,10 @@ function Routes() {
                         headerTintColor: '#FFF',
                         //headerBackTitleVisible: false,
                         cardStyle: {
-                            backgroundColor: '#4b7e96'
+                            backgroundColor: '#273A4B'
                         },
                         headerStyle: {
-                            backgroundColor: '#4b7e96',
+                            backgroundColor: '#273A4B',
                             
                         }
                     }

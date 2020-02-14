@@ -21,7 +21,7 @@ export default function App() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#4b7e96" />
+      <StatusBar barStyle="dark-content" backgroundColor="#3FD59A" />
       {fontLoaded ? (
         <Routes></Routes>
       ) :
