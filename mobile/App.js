@@ -17,8 +17,6 @@ export default function App() {
 
   loadFonts();
 
-  console.log();
-
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor="#3FD59A" />

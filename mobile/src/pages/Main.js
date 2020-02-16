@@ -1,45 +1,57 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import getCurrentGreeting from '../utils/checkGreeting';
+import { formatDateOfTheDay, getCurrentGreeting } from '../utils/dateFormat';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
+import api from '../services/api';
 
 function Main() {
     const sharedViewRef = useRef('sharedViewRef');
+    const [messageOfTheDay, setMessageOfTheDay] = useState('')
+    const [author, setAuthor] = useState('')
+    const [dateMessage, setDateMessage] = useState('')
 
     async function shareButton() {
         const uri = await sharedViewRef.current.capture();
         await Sharing.shareAsync(uri);
     }
 
-    function greetingMessage() {
-        return getCurrentGreeting();
+    async function loadDailyMessage() {
+        const dailyMessage = await api.get(`/mensagem/data/${new Date().toISOString().substr(0, 10)}`)
+
+        if (dailyMessage.data != null && dailyMessage.data.length > 0) {
+            setDateMessage(dailyMessage.data[0].dateMessage);
+            setAuthor(dailyMessage.data[0].author);
+            setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+        }
     }
+
+    loadDailyMessage();
 
     return <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerView}>
-            <Text style={styles.greetingTitle}>{greetingMessage()}</Text>
+            <Text style={styles.greetingTitle}>{getCurrentGreeting()}</Text>
             <MaterialIcons name="settings" size={25} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
         </View>
-        <ViewShot ref={sharedViewRef} style={{ alignSelf: 'flex-end', backgroundColor: '#273A4B' }}
+        <ViewShot ref={sharedViewRef} style={{ alignSelf: 'center', backgroundColor: '#273A4B' }}
             options={{
                 format: "png",
                 quality: 1,
                 result: "tmpfile"
             }}>
             <View style={styles.headerDateMessage}>
-                <Text style={styles.dateMessage}>Mensagem do dia</Text>
-                <Text style={styles.dateMessage}>12 de Fevereiro de 2020</Text>
+                <Text style={styles.dateMessageLine1}>Mensagem do dia</Text>
+                <Text style={styles.dateMessageLine2}>{formatDateOfTheDay(dateMessage)}</Text>
             </View>
             <Image
                 source={require('../../assets/icons/quote-left-solid.png')}
                 fadeDuration={1500}
                 style={styles.quotationMarkLeft}
             />
-            <Text style={styles.dailyMessage}>Quando te vi, peguei um burro e fugi. De saudade não aguentei, peguei um jegue e voltei.</Text>
-            <Text style={styles.author}>Leandro Rovagnoli</Text>
+            <Text style={styles.dailyMessage}>{messageOfTheDay}</Text>
+            <Text style={styles.author}>{author}</Text>
             <View>
                 <Image
                     source={require('../../assets/icons/quote-right-solid.png')}
@@ -83,6 +95,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     quotationMarkLeft: {
+        marginLeft: 10,
         width: 25,
         height: 25,
         tintColor: '#3FD59A'
@@ -94,14 +107,15 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         position: 'absolute',
         bottom: 20,
+        right: 10,
     },
     dailyMessage: {
         fontFamily: 'CarterOne-Regular',
         textAlign: 'center',
-        fontSize: 25,
+        fontSize: 22,
         color: '#FFF',
         marginLeft: 20,
-        marginRight: 20
+        marginRight: 20,
     },
     author: {
         marginTop: 25,
@@ -113,10 +127,17 @@ const styles = StyleSheet.create({
         color: '#3FD59A',
         opacity: 0.6
     },
-    dateMessage: {
+    dateMessageLine1: {
         textAlign: 'center',
         fontFamily: 'CarterOne-Regular',
         fontSize: 20,
+        color: '#3FD59A',
+        opacity: 0.7,
+    },
+    dateMessageLine2: {
+        textAlign: 'center',
+        fontFamily: 'CarterOne-Regular',
+        fontSize: 25,
         color: '#3FD59A',
     },
     footerView: {
