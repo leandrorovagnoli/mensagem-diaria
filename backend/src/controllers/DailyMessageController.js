@@ -7,7 +7,13 @@ module.exports = {
     },
 
     async getByDate(req, res) {
-        const dailyMessage = await DailyMessage.find({ dateMessage: req.params.dateMessage });
+        const dateQuery = req.params.dateMessage != undefined ? req.params.dateMessage.substring(0, 10) : ''
+        
+        const dailyMessage = await DailyMessage.find(
+            {
+                dateMessage: dateQuery
+            });
+
         return res.json(dailyMessage);
     },
 
@@ -33,7 +39,7 @@ module.exports = {
 
             const obj = await DailyMessage.create(newDailyMessage)
                 .catch(function (err) {
-                    return res.json({ message: 'Houve uma falha ao atualizar. Entre em contato com o desenvolvedor!', err: err })
+                    return res.json({ message: 'Houve uma falha ao salvar. Entre em contato com o desenvolvedor!', err: err })
                 })
 
             return res.json(obj);
