@@ -16,8 +16,7 @@ function formatDateOfTheDay(date) {
     if (!date)
         return '';
 
-    const dateWithoutTime = date.substring(0, 10);
-    return moment(dateWithoutTime).locale('pt-BR').format('LL');
+    return moment(date).locale('pt-BR').utc(false).format('LL');
 }
 
 export {

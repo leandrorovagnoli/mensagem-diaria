@@ -1,34 +1,94 @@
-import React, { useRef, useState } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, Share } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { formatDateOfTheDay, getCurrentGreeting } from '../utils/dateFormat';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
 import api from '../services/api';
+import * as Permissions from 'expo-permissions';
+import { Notifications } from 'expo';
+import Constants from 'expo-constants';
+import moment from 'moment';
+import 'moment/locale/pt-br'
 
 function Main() {
     const sharedViewRef = useRef('sharedViewRef');
     const [messageOfTheDay, setMessageOfTheDay] = useState('')
     const [author, setAuthor] = useState('')
     const [dateMessage, setDateMessage] = useState('')
+    let userInput = null;
 
     async function shareButton() {
         const uri = await sharedViewRef.current.capture();
         await Sharing.shareAsync(uri);
     }
 
-    async function loadDailyMessage() {
-        const dailyMessage = await api.get(`/mensagem/data/${new Date().toISOString().substr(0, 10)}`)
+    useEffect(() => {
+        async function loadDailyMessage() {
+            const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
 
-        if (dailyMessage.data != null && dailyMessage.data.length > 0) {
-            setDateMessage(dailyMessage.data[0].dateMessage);
-            setAuthor(dailyMessage.data[0].author);
-            setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+            if (dailyMessage.data != null && dailyMessage.data.length > 0) {
+                setDateMessage(dailyMessage.data[0].dateMessage);
+                setAuthor(dailyMessage.data[0].author);
+                setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+            }
         }
-    }
 
-    loadDailyMessage();
+        async function askPermissions() {
+            // We need to ask for Notification permissions for ios devices
+            let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+            if (Constants.isDevice && result.status === 'granted') {
+                // console.log('Notification permissions granted.')
+            }
+
+            // If we want to do something with the notification when the app
+            // is active, we need to listen to notification events and 
+            // handle them in a callback
+            Notifications.addListener(handleNotification);
+        }
+
+        function testingNotification() {
+            const localNotification = {
+                title: 'done title',
+                body: 'done body!'
+            };
+
+            userInput = new Date('2020-02-17T04:45:15.000')
+
+
+            //Get the user's timezone and set the correct date/time for the notification.
+            const timeZoneOffset = new Date().getTimezoneOffset();
+            const currentTime = new Date(moment(userInput).add(timeZoneOffset, 'minutes')).getTime();
+
+            const schedulingOptions = {
+                time: currentTime,
+                repeat: 'minute'
+            }
+
+            // Notifications show only when app is not active.
+            // (ie. another app being used or device's screen is locked)
+            Notifications.scheduleLocalNotificationAsync(
+                localNotification, schedulingOptions
+            );
+        };
+
+        function handleNotification() {
+            console.warn('ok! got your notif');
+
+            // userInput = moment(userInput).add(1, 'day')
+            // console.log(userInput)
+        }
+
+        loadDailyMessage();
+        // askPermissions();
+        // testingNotification();
+    }, [])
+
+
+
+
 
     return <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerView}>
