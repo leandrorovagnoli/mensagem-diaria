@@ -8,24 +8,81 @@ import ViewShot from 'react-native-view-shot';
 import api from '../services/api';
 import * as Permissions from 'expo-permissions';
 import { Notifications } from 'expo';
-import Constants from 'expo-constants';
 import moment from 'moment';
-import 'moment/locale/pt-br'
+import 'moment/locale/pt-br';
+import LocalStorage from '../utils/LocalStorage';
+import { useFocusEffect } from '@react-navigation/native';
 
-function Main() {
+function Main(props) {
     const sharedViewRef = useRef('sharedViewRef');
     const [messageOfTheDay, setMessageOfTheDay] = useState('')
     const [author, setAuthor] = useState('')
     const [dateMessage, setDateMessage] = useState('')
-    let userInput = null;
 
-    async function shareButton() {
-        const uri = await sharedViewRef.current.capture();
-        await Sharing.shareAsync(uri);
-    }
+    useFocusEffect(() => {
+        const loadLocalStorage = async () => {
+            const NOTIFICATION_TIME = await LocalStorage.getItem('NOTIFICATION_TIME');
+            const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS');
+            const NOTIFICATION_UPDATED = await LocalStorage.getItem('NOTIFICATION_UPDATED');
+
+            if (NOTIFICATION_UPDATED === null)
+                await LocalStorage.setItem('NOTIFICATION_UPDATED', true); //default value
+
+            if (NOTIFICATION_STATUS === null)
+                await LocalStorage.setItem('NOTIFICATION_STATUS', true); //default value
+
+            if (NOTIFICATION_TIME === null)
+                await LocalStorage.setItem('NOTIFICATION_TIME', new Date(moment().set({
+                    'hour': '10',
+                    'minute': '00',
+                    'second': '00'
+                }))); //default value
+        }
+
+        const loadNotificationSystem = async () => {
+            const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS')
+
+            if (!NOTIFICATION_STATUS) {
+                await Notifications.cancelAllScheduledNotificationsAsync();
+                return;
+            }
+
+            const NOTIFICATION_TIME = new Date(await LocalStorage.getItem('NOTIFICATION_TIME'))
+            const NOTIFICATION_UPDATED = await LocalStorage.getItem('NOTIFICATION_UPDATED')
+
+            if (NOTIFICATION_TIME == null || !NOTIFICATION_UPDATED)
+                return;
+
+            const localNotification = {
+                title: 'Mensagem do dia',
+                body: messageOfTheDay
+            };
+
+            const currentTime = new Date(moment(NOTIFICATION_TIME)).getTime();
+
+            const schedulingOptions = {
+                time: currentTime,
+                repeat: 'day'
+            }
+
+            await Notifications.cancelAllScheduledNotificationsAsync();
+
+            // Notifications show only when app is not active.
+            // (ie. another app being used or device's screen is locked)
+            await Notifications.scheduleLocalNotificationAsync(
+                localNotification, schedulingOptions
+            );
+
+            await LocalStorage.setItem('NOTIFICATION_UPDATED', false);
+        };
+
+        loadLocalStorage();
+        loadNotificationSystem();
+
+    }, [])
 
     useEffect(() => {
-        async function loadDailyMessage() {
+        const loadDailyMessage = async () => {
             const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
 
             if (dailyMessage.data != null && dailyMessage.data.length > 0) {
@@ -35,65 +92,33 @@ function Main() {
             }
         }
 
-        async function askPermissions() {
+        const askPermissions = async () => {
             // We need to ask for Notification permissions for ios devices
-            let result = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-
-            if (Constants.isDevice && result.status === 'granted') {
-                // console.log('Notification permissions granted.')
-            }
-
-            // If we want to do something with the notification when the app
-            // is active, we need to listen to notification events and 
-            // handle them in a callback
-            Notifications.addListener(handleNotification);
+            await Permissions.askAsync(Permissions.NOTIFICATIONS);
         }
 
-        function testingNotification() {
-            const localNotification = {
-                title: 'done title',
-                body: 'done body!'
-            };
-
-            userInput = new Date('2020-02-17T04:45:15.000')
-
-
-            //Get the user's timezone and set the correct date/time for the notification.
-            const timeZoneOffset = new Date().getTimezoneOffset();
-            const currentTime = new Date(moment(userInput).add(timeZoneOffset, 'minutes')).getTime();
-
-            const schedulingOptions = {
-                time: currentTime,
-                repeat: 'minute'
-            }
-
-            // Notifications show only when app is not active.
-            // (ie. another app being used or device's screen is locked)
-            Notifications.scheduleLocalNotificationAsync(
-                localNotification, schedulingOptions
-            );
-        };
-
-        function handleNotification() {
-            console.warn('ok! got your notif');
-
-            // userInput = moment(userInput).add(1, 'day')
-            // console.log(userInput)
-        }
+        // const handleNotification = () => {
+        //     console.warn('ok! got your notif');
+        // }
 
         loadDailyMessage();
-        // askPermissions();
-        // testingNotification();
+        askPermissions();
+
     }, [])
 
+    const shareButton = async () => {
+        const uri = await sharedViewRef.current.capture();
+        await Sharing.shareAsync(uri);
+    }
 
-
-
+    const settingsButton = () => {
+        props.navigation.navigate('Settings')
+    }
 
     return <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerView}>
             <Text style={styles.greetingTitle}>{getCurrentGreeting()}</Text>
-            <MaterialIcons name="settings" size={25} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
+
         </View>
         <ViewShot ref={sharedViewRef} style={{ alignSelf: 'center', backgroundColor: '#273A4B' }}
             options={{
@@ -110,7 +135,7 @@ function Main() {
                 fadeDuration={1500}
                 style={styles.quotationMarkLeft}
             />
-            <Text style={styles.dailyMessage}>{messageOfTheDay}</Text>
+            <Text selectable={true} style={styles.dailyMessage}>{messageOfTheDay}</Text>
             <Text style={styles.author}>{author}</Text>
             <View>
                 <Image
@@ -121,9 +146,12 @@ function Main() {
             </View>
         </ViewShot>
         <View style={styles.footerView}>
-            <MaterialIcons name="favorite-border" size={30} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
-            <TouchableOpacity style={styles.generalButton} onPress={shareButton}>
+            {/* <MaterialIcons name="favorite-border" size={30} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} /> */}
+            <TouchableOpacity onPress={shareButton}>
                 <MaterialIcons name="share" size={30} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={settingsButton}>
+                <MaterialIcons name="settings" size={25} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
             </TouchableOpacity>
         </View>
     </SafeAreaView>

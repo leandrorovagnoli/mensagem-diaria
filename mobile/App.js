@@ -4,6 +4,10 @@ import * as Font from 'expo-font';
 
 import Routes from './src/routes'
 
+YellowBox.ignoreWarnings([
+  'Provided value for "time" is before the current date.'
+]);
+
 export default function App() {
   const [fontLoaded, setFont] = useState(false);
 
