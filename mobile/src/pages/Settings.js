@@ -5,7 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import LocalStorage from '../utils/LocalStorage';
 import NotificationSystem from '../utils/notificationSystem';
 
-function Settings(messageOfTheDay) {
+function Settings({ route }) {
     const [enableDailyNotification, setEnableDailyNotification] = useState(true);
     const [dateTimeNotification, setDateTimeNotification] = useState(null);
     const [showTimePicker, setShowTimePicker] = useState(false);
@@ -43,6 +43,7 @@ function Settings(messageOfTheDay) {
         await LocalStorage.setItem('NOTIFICATION_TIME', currentDate);
         await LocalStorage.setItem('NOTIFICATION_UPDATED', true);
 
+        const { messageOfTheDay } = route.params;
         await NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
     }
 

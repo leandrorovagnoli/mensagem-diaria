@@ -21,7 +21,7 @@ function Main(props) {
     const [dateMessage, setDateMessage] = useState('')
 
     useFocusEffect(() => {
-        NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
+
     }, [])
 
     useEffect(() => {
@@ -52,6 +52,7 @@ function Main(props) {
         loadDailyMessage();
         askPermissions();
         LocalStorage.loadDefaultSettings();
+        NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
     }, [])
 
     const shareButton = async () => {
@@ -60,7 +61,7 @@ function Main(props) {
     }
 
     const settingsButton = () => {
-        props.navigation.navigate('Settings', { messageOfTheDay: messageOfTheDay })
+        props.navigation.navigate('Settings', { messageOfTheDay: messageOfTheDay });
     }
 
     return <SafeAreaView style={styles.safeArea}>

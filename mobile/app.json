@@ -1,12 +1,15 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Pensamento do Dia",
+    "slug": "Pensamento-do-dia-mobile",
+    "description": "Mensagens diárias de motivação. Pequenos toques de sabedoria.",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
       "android"
     ],
+    "backgroundColor": "#273A4B",
+    "owner": "Rovagnoli Labs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,6 +17,9 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#273A4B"
+    },
+    "notification": {
+      "icon": "./assets/iconNotification.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,14 +29,17 @@
     ],
     "android": {
       "package": "com.rovagnolilabs.pensamentododia",
-      "versionCode": 1
+      "versionCode": 1,
+      "backgroundColor": "#273A4B"
+
     },
     "androidNavigationBar": {
       "backgroundColor": "#273A4B",
       "barStyle": "dark-content"
     },
     "androidStatusBar": {
-      "backgroundColor": "#3FD59A"
+      "backgroundColor": "#3FD59A",
+      "barStyle": "dark-content"
     }
   }
 }
