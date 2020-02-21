@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import 'moment/locale/pt-br';
 import LocalStorage from '../utils/LocalStorage';
+import NotificationSystem from '../utils/notificationSystem';
 
-function Settings() {
+function Settings(messageOfTheDay) {
     const [enableDailyNotification, setEnableDailyNotification] = useState(true);
     const [dateTimeNotification, setDateTimeNotification] = useState(null);
     const [showTimePicker, setShowTimePicker] = useState(false);
@@ -18,13 +17,6 @@ function Settings() {
 
             if (value !== null)
                 setDateTimeNotification(new Date(value));
-            else {
-                setDateTimeNotification(new Date(moment().set({
-                    'hour': '10',
-                    'minute': '00',
-                    'second': '00'
-                }))) //default value
-            }
         }
 
         const loadNotificationStatus = async () => {
@@ -32,15 +24,11 @@ function Settings() {
 
             if (value !== null)
                 setEnableDailyNotification(value);
-            else {
-                setEnableDailyNotification(true); //default value
-            }
         }
 
         loadNotificationTime();
         loadNotificationStatus();
     }, [])
-
 
     const handleToggleEnableDailyNotification = async (value) => {
         setEnableDailyNotification(value);
@@ -54,6 +42,8 @@ function Settings() {
 
         await LocalStorage.setItem('NOTIFICATION_TIME', currentDate);
         await LocalStorage.setItem('NOTIFICATION_UPDATED', true);
+
+        await NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
     }
 
     const getLocaleTime = () => {

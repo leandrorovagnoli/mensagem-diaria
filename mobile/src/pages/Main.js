@@ -7,11 +7,12 @@ import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
 import api from '../services/api';
 import * as Permissions from 'expo-permissions';
-import { Notifications } from 'expo';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import LocalStorage from '../utils/LocalStorage';
+import NotificationSystem from '../utils/notificationSystem';
 import { useFocusEffect } from '@react-navigation/native';
+import { SplashScreen } from 'expo';
 
 function Main(props) {
     const sharedViewRef = useRef('sharedViewRef');
@@ -20,75 +21,26 @@ function Main(props) {
     const [dateMessage, setDateMessage] = useState('')
 
     useFocusEffect(() => {
-        const loadLocalStorage = async () => {
-            const NOTIFICATION_TIME = await LocalStorage.getItem('NOTIFICATION_TIME');
-            const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS');
-            const NOTIFICATION_UPDATED = await LocalStorage.getItem('NOTIFICATION_UPDATED');
-
-            if (NOTIFICATION_UPDATED === null)
-                await LocalStorage.setItem('NOTIFICATION_UPDATED', true); //default value
-
-            if (NOTIFICATION_STATUS === null)
-                await LocalStorage.setItem('NOTIFICATION_STATUS', true); //default value
-
-            if (NOTIFICATION_TIME === null)
-                await LocalStorage.setItem('NOTIFICATION_TIME', new Date(moment().set({
-                    'hour': '10',
-                    'minute': '00',
-                    'second': '00'
-                }))); //default value
-        }
-
-        const loadNotificationSystem = async () => {
-            const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS')
-
-            if (!NOTIFICATION_STATUS) {
-                await Notifications.cancelAllScheduledNotificationsAsync();
-                return;
-            }
-
-            const NOTIFICATION_TIME = new Date(await LocalStorage.getItem('NOTIFICATION_TIME'))
-            const NOTIFICATION_UPDATED = await LocalStorage.getItem('NOTIFICATION_UPDATED')
-
-            if (NOTIFICATION_TIME == null || !NOTIFICATION_UPDATED)
-                return;
-
-            const localNotification = {
-                title: 'Mensagem do dia',
-                body: messageOfTheDay
-            };
-
-            const currentTime = new Date(moment(NOTIFICATION_TIME)).getTime();
-
-            const schedulingOptions = {
-                time: currentTime,
-                repeat: 'day'
-            }
-
-            await Notifications.cancelAllScheduledNotificationsAsync();
-
-            // Notifications show only when app is not active.
-            // (ie. another app being used or device's screen is locked)
-            await Notifications.scheduleLocalNotificationAsync(
-                localNotification, schedulingOptions
-            );
-
-            await LocalStorage.setItem('NOTIFICATION_UPDATED', false);
-        };
-
-        loadLocalStorage();
-        loadNotificationSystem();
-
+        NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
     }, [])
 
     useEffect(() => {
-        const loadDailyMessage = async () => {
-            const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
+        SplashScreen.preventAutoHide();
 
-            if (dailyMessage.data != null && dailyMessage.data.length > 0) {
-                setDateMessage(dailyMessage.data[0].dateMessage);
-                setAuthor(dailyMessage.data[0].author);
-                setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+        const loadDailyMessage = async () => {
+            try {
+                const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
+
+                if (dailyMessage.data != null && dailyMessage.data.length > 0) {
+                    setDateMessage(dailyMessage.data[0].dateMessage);
+                    setAuthor(dailyMessage.data[0].author);
+                    setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+                }
+
+                SplashScreen.hide();
+            }
+            catch (e) {
+                throw e;
             }
         }
 
@@ -97,13 +49,9 @@ function Main(props) {
             await Permissions.askAsync(Permissions.NOTIFICATIONS);
         }
 
-        // const handleNotification = () => {
-        //     console.warn('ok! got your notif');
-        // }
-
         loadDailyMessage();
         askPermissions();
-
+        LocalStorage.loadDefaultSettings();
     }, [])
 
     const shareButton = async () => {
@@ -112,7 +60,7 @@ function Main(props) {
     }
 
     const settingsButton = () => {
-        props.navigation.navigate('Settings')
+        props.navigation.navigate('Settings', { messageOfTheDay: messageOfTheDay })
     }
 
     return <SafeAreaView style={styles.safeArea}>
@@ -127,7 +75,7 @@ function Main(props) {
                 result: "tmpfile"
             }}>
             <View style={styles.headerDateMessage}>
-                <Text style={styles.dateMessageLine1}>Mensagem do dia</Text>
+                <Text style={styles.dateMessageLine1}>Pensamento do dia</Text>
                 <Text style={styles.dateMessageLine2}>{formatDateOfTheDay(dateMessage)}</Text>
             </View>
             <Image
