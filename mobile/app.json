@@ -29,8 +29,11 @@
     "android": {
       "package": "com.rovagnolilabs.pensamentododia",
       "versionCode": 1,
-      "backgroundColor": "#273A4B"
-
+      "backgroundColor": "#273A4B",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/iconForegroundImage.png",
+        "backgroundColor": "#273A4B"
+      }
     },
     "androidNavigationBar": {
       "backgroundColor": "#273A4B",

@@ -11,7 +11,6 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import LocalStorage from '../utils/LocalStorage';
 import NotificationSystem from '../utils/notificationSystem';
-import { useFocusEffect } from '@react-navigation/native';
 import { SplashScreen } from 'expo';
 
 function Main(props) {
@@ -19,10 +18,6 @@ function Main(props) {
     const [messageOfTheDay, setMessageOfTheDay] = useState('')
     const [author, setAuthor] = useState('')
     const [dateMessage, setDateMessage] = useState('')
-
-    useFocusEffect(() => {
-
-    }, [])
 
     useEffect(() => {
         SplashScreen.preventAutoHide();
@@ -32,7 +27,7 @@ function Main(props) {
                 const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
 
                 if (dailyMessage.data != null && dailyMessage.data.length > 0) {
-                    setDateMessage(dailyMessage.data[0].dateMessage);
+                    setDateMessage(moment.utc(dailyMessage.data[0].dateMessage).format('LL'));
                     setAuthor(dailyMessage.data[0].author);
                     setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
                 }
@@ -77,7 +72,7 @@ function Main(props) {
             }}>
             <View style={styles.headerDateMessage}>
                 <Text style={styles.dateMessageLine1}>Pensamento do dia</Text>
-                <Text style={styles.dateMessageLine2}>{formatDateOfTheDay(dateMessage)}</Text>
+                <Text style={styles.dateMessageLine2}>{dateMessage}</Text>
             </View>
             <Image
                 source={require('../../assets/icons/quote-left-solid.png')}
