@@ -34,7 +34,7 @@ export default {
         }
 
         await Notifications.cancelAllScheduledNotificationsAsync();
-
+        
         // Notifications show only when app is not active.
         // (ie. another app being used or device's screen is locked)
         await Notifications.scheduleLocalNotificationAsync(

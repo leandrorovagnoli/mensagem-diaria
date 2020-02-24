@@ -12,14 +12,6 @@ function getCurrentGreeting() {
         return 'Boa noite!';
 }
 
-function formatDateOfTheDay(date) {
-    if (!date)
-        return '';
-
-    return moment(date).locale('pt-BR').utc(false).format('LL');
-}
-
 export {
-    getCurrentGreeting,
-    formatDateOfTheDay
+    getCurrentGreeting
 }

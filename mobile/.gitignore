@@ -14,6 +14,7 @@ web-report/
 .env
 app.json
 google-services.json
+*/dataModel.json
 
 # macOS
 .DS_Store

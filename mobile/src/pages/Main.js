@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { formatDateOfTheDay, getCurrentGreeting } from '../utils/dateFormat';
+import { getCurrentGreeting } from '../utils/dateFormat';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
@@ -21,7 +21,7 @@ function Main(props) {
 
     useEffect(() => {
         SplashScreen.preventAutoHide();
-        
+
         const loadDailyMessage = async () => {
             try {
                 const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
@@ -92,10 +92,10 @@ function Main(props) {
         <View style={styles.footerView}>
             {/* <MaterialIcons name="favorite-border" size={30} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} /> */}
             <TouchableOpacity onPress={shareButton}>
-                <MaterialIcons name="share" size={30} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
+                <MaterialIcons name="share" size={30} color="#3FD59A" style={styles.generalButton} />
             </TouchableOpacity>
             <TouchableOpacity onPress={settingsButton}>
-                <MaterialIcons name="settings" size={25} color="#3FD59A" style={{ marginRight: 3, marginTop: 7 }} />
+                <MaterialIcons name="settings" size={25} color="#3FD59A" style={styles.generalButton} />
             </TouchableOpacity>
         </View>
     </SafeAreaView>
@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     generalButton: {
-
+        marginRight: 3,
+        marginTop: 7
     },
     headerView: {
         flexDirection: 'row',
@@ -148,6 +149,7 @@ const styles = StyleSheet.create({
         color: '#FFF',
         marginLeft: 20,
         marginRight: 20,
+        marginTop: 20,
     },
     author: {
         marginTop: 25,
