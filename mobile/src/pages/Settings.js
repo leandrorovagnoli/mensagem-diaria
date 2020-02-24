@@ -43,8 +43,7 @@ function Settings({ route }) {
         await LocalStorage.setItem('NOTIFICATION_TIME', currentDate);
         await LocalStorage.setItem('NOTIFICATION_UPDATED', true);
 
-        const { messageOfTheDay } = route.params;
-        await NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
+        await NotificationSystem.scheduleNotification()
     }
 
     const getLocaleTime = () => {

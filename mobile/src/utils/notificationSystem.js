@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 
 export default {
-    async scheduleNotification(notificationTitle, notificationMessage) {
+    async scheduleNotification() {
         const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS')
 
         if (!NOTIFICATION_STATUS) {
@@ -18,8 +18,8 @@ export default {
             return;
 
         const localNotification = {
-            title: notificationTitle,
-            body: notificationMessage
+            title: "Nova mensagem do dia",
+            body: "Confira o pensamento para o dia de hoje!"
         };
 
         let currentTime = moment(NOTIFICATION_TIME);

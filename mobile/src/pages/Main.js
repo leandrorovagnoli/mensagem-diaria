@@ -21,7 +21,7 @@ function Main(props) {
 
     useEffect(() => {
         SplashScreen.preventAutoHide();
-
+        
         const loadDailyMessage = async () => {
             try {
                 const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
@@ -44,10 +44,10 @@ function Main(props) {
             await Permissions.askAsync(Permissions.NOTIFICATIONS);
         }
 
+        LocalStorage.loadDefaultSettings();
         loadDailyMessage();
         askPermissions();
-        LocalStorage.loadDefaultSettings();
-        NotificationSystem.scheduleNotification('Pensamento do dia', messageOfTheDay)
+        NotificationSystem.scheduleNotification()
     }, [])
 
     const shareButton = async () => {
@@ -56,7 +56,7 @@ function Main(props) {
     }
 
     const settingsButton = () => {
-        props.navigation.navigate('Settings', { messageOfTheDay: messageOfTheDay });
+        props.navigation.navigate('Settings');
     }
 
     return <SafeAreaView style={styles.safeArea}>
