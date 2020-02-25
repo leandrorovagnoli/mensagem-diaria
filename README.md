@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="Pensamento do Dia" src=".github/icon.png" width="250px" />
+    <img alt="Pensamento do Dia" src=".github/icon.png" width="150px" />
 </h1>
 
 <h4 align="center">
@@ -17,7 +17,7 @@
 
 ## 💻 Projeto
 
-O 'Pensamento do Dia' é um projeto que visa motivar seus usuários através de mensagens e frases de autores famosos e renomados.
+O 'Pensamento do Dia' é um projeto que visa motivar seus usuários através de mensagens e frases de autores famosos.
 
 <br>
 
@@ -34,15 +34,16 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 <br>
 
 # Mobile App
+## [Google Play Store](https://leandrorovagnoli.dev "Pensamento do Dia")
 <p align="center">
-  <img alt="Frontend-splashscreen" src=".github/1.png" width="60%">
-  <img alt="Frontend-app" src=".github/2.png" width="60%">
-  <img alt="Frontend-settings" src=".github/3.png" width="60%">
+  <img alt="Frontend-splashscreen" src=".github/1.png" width="32%">
+  <img alt="Frontend-app" src=".github/2.png" width="32%">
+  <img alt="Frontend-settings" src=".github/3.png" width="32%">
 </p>
 
 <br>
 
 # Interface Web
 <p align="center">
-  <img alt="Frontend-web" src=".github/4.png" width="70%">
+  <img alt="Frontend-web" src=".github/4.png" width="100%">
 </p>
