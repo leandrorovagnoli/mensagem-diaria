@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img alt="Pensamento do Dia" src=".github/icon.png" width="150px" />
+    <img alt="Pensamento do Dia" src=".github/icon.png" width="250px" />
 </h1>
 
 <h4 align="center">
@@ -33,7 +33,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 <br>
 
-# Mobile App
+# Mobile App 
 ## [Google Play Store](https://leandrorovagnoli.dev "Pensamento do Dia")
 <p align="center">
   <img alt="Frontend-splashscreen" src=".github/1.png" width="32%">
