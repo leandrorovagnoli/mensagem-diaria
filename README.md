@@ -34,7 +34,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 <br>
 
 # Mobile App 
-## [Google Play Store](https://leandrorovagnoli.dev "Pensamento do Dia")
+## [Google Play Store](https://play.google.com/store/apps/details?id=com.rovagnolilabs.pensamentododia "Pensamento do Dia")
 <p align="center">
   <img alt="Frontend-splashscreen" src=".github/1.png" width="32%">
   <img alt="Frontend-app" src=".github/2.png" width="32%">
