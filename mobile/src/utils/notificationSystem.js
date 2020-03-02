@@ -1,10 +1,11 @@
 import { Notifications } from 'expo';
 import LocalStorage from '../utils/LocalStorage';
+import * as Permissions from 'expo-permissions';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
 export default {
-    async scheduleNotification() {
+    async scheduleNotification(dailyMessage) {
         const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS')
 
         if (!NOTIFICATION_STATUS) {
@@ -18,8 +19,14 @@ export default {
             return;
 
         const localNotification = {
-            title: "Nova mensagem do dia",
-            body: "Confira o pensamento para o dia de hoje!"
+            title: 'Nova mensagem do dia',
+            body: dailyMessage,
+            android: {
+                channelID: 'dailyMessagesChannel',
+                sound: true,
+                priority: 'max',
+                vibrate: true
+            }
         };
 
         let currentTime = moment(NOTIFICATION_TIME);
@@ -34,7 +41,7 @@ export default {
         }
 
         await Notifications.cancelAllScheduledNotificationsAsync();
-        
+
         // Notifications show only when app is not active.
         // (ie. another app being used or device's screen is locked)
         await Notifications.scheduleLocalNotificationAsync(
@@ -42,5 +49,23 @@ export default {
         );
 
         await LocalStorage.setItem('NOTIFICATION_UPDATED', false);
+    },
+
+    async notificationsChannelCreate() {
+        if (Platform.OS === 'android') {
+            await Notifications.createChannelAndroidAsync('dailyMessagesChannel', {
+                name: 'Daily Messages Channel',
+                //description: '',
+                sound: true,
+                priority: 'max',
+                vibrate: true,
+                badge: true
+            });
+        }
+    },
+
+    async askPermissions() {
+        // We need to ask for Notification permissions for ios devices
+        await Permissions.askAsync(Permissions.NOTIFICATIONS);
     }
 }

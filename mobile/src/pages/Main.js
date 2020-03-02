@@ -5,13 +5,13 @@ import { getCurrentGreeting } from '../utils/dateFormat';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import ViewShot from 'react-native-view-shot';
-import api from '../services/api';
-import * as Permissions from 'expo-permissions';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import LocalStorage from '../utils/LocalStorage';
 import NotificationSystem from '../utils/notificationSystem';
 import { SplashScreen } from 'expo';
+import api from '../services/api';
+import dataModel from '../../src/dataModel.json';
 
 function Main(props) {
     const sharedViewRef = useRef('sharedViewRef');
@@ -24,6 +24,17 @@ function Main(props) {
 
         const loadDailyMessage = async () => {
             try {
+                // USING LOCAL DATA (JSON FILE)
+                // const currentDate = moment().utc(true).toISOString().substr(0, 10);
+                // const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(currentDate))
+
+                // if (dailyMessage != null) {
+                //     setDateMessage(moment.utc(dailyMessage.dateMessage).format('LL'));
+                //     setAuthor(dailyMessage.author);
+                //     setMessageOfTheDay(dailyMessage.dailyMessage);
+                // }
+
+                // USING API (MONGODB)
                 const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
 
                 if (dailyMessage.data != null && dailyMessage.data.length > 0) {
@@ -39,15 +50,11 @@ function Main(props) {
             }
         }
 
-        const askPermissions = async () => {
-            // We need to ask for Notification permissions for ios devices
-            await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        }
-
+        NotificationSystem.notificationsChannelCreate();
         LocalStorage.loadDefaultSettings();
         loadDailyMessage();
-        askPermissions();
-        NotificationSystem.scheduleNotification()
+        NotificationSystem.askPermissions();
+        NotificationSystem.scheduleNotification(messageOfTheDay)
     }, [])
 
     const shareButton = async () => {
@@ -56,7 +63,7 @@ function Main(props) {
     }
 
     const settingsButton = () => {
-        props.navigation.navigate('Settings');
+        props.navigation.navigate('Settings', { messageOfTheDay: messageOfTheDay });
     }
 
     return <SafeAreaView style={styles.safeArea}>
