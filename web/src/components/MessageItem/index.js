@@ -13,7 +13,7 @@ function MessageItem({ data, deleteDailyMessage, editRow }) {
     function handleDeleteMessage(e) {
         e.preventDefault();
 
-        deleteDailyMessage(data._id);
+        deleteDailyMessage(data.id);
     }
 
     function handleEditMessage(e) {
@@ -37,9 +37,9 @@ function MessageItem({ data, deleteDailyMessage, editRow }) {
                         </a>
                     </div>
                 </div>
-                <p>{data.dailyMessage}</p>
+                <p>{data.message}</p>
                 <span name="spanAuthor">{data.author}</span>
-                <span name="spanDate">{dateMessageFormat(data.dateMessage)}</span>
+                <span name="spanDate">{dateMessageFormat(data.date)}</span>
             </li>
         </>
     );

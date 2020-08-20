@@ -4,25 +4,25 @@ import dateFormat from '../../utils/momentDateFormat';
 
 function EditMessageForm({ updateDailyMessage, setCurrentDailyMessage, currentDailyMessage, setEditing }) {
     const [author, setAuthor] = useState(currentDailyMessage.author);
-    const [dailyMessage, setDailyMessage] = useState(currentDailyMessage.dailyMessage);;
-    const [dateMessage, setDateMessage] = useState(currentDailyMessage.dateMessage);
+    const [message, setDailyMessage] = useState(currentDailyMessage.message);;
+    const [date, setDateMessage] = useState(currentDailyMessage.date);
 
     useEffect(() => {
-        setDailyMessage(currentDailyMessage.dailyMessage)
+        setDailyMessage(currentDailyMessage.message)
         setAuthor(currentDailyMessage.author)
-        setDateMessage(currentDailyMessage.dateMessage)
+        setDateMessage(currentDailyMessage.date)
     },
         [currentDailyMessage])
 
     function handleUpdateSubmit(e) {
         e.preventDefault();
 
-        updateDailyMessage(currentDailyMessage._id,
+        updateDailyMessage(currentDailyMessage.id,
             {
-                _id: currentDailyMessage._id,
+                id: currentDailyMessage.id,
                 author,
-                dailyMessage,
-                dateMessage
+                message,
+                date
             });
 
         setEditing(false);
@@ -53,7 +53,7 @@ function EditMessageForm({ updateDailyMessage, setCurrentDailyMessage, currentDa
                     <textarea name="dailyMessage"
                         id="dailyMessage"
                         required
-                        value={dailyMessage}
+                        value={message}
                         onChange={e => setDailyMessage(e.target.value)} />
                 </div>
                 <div className="inputBlock">
@@ -63,7 +63,7 @@ function EditMessageForm({ updateDailyMessage, setCurrentDailyMessage, currentDa
                         id="dateMessage"
                         name="dateMessage"
                         required
-                        value={dateMessageFormat(dateMessage)}
+                        value={dateMessageFormat(date)}
                         onChange={e => setDateMessage(e.target.value)} />
                 </div>
                 <button type="submit">Salvar</button>

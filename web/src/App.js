@@ -26,31 +26,39 @@ function App() {
   })
 
   async function addDailyMessage(data) {
-    const response = await api.post('/', data)
+    const response = await api.post('/', {
+      'author': data.author,
+      'message': data.message,
+      'date': data.date
+    })
 
     setDailyMessages([...dailyMessages, response.data]);
   }
 
   async function deleteDailyMessage(id) {
-    await api.delete(`/mensagem/${id}`);
+    await api.delete(`/${id}`);
 
     setDailyMessages(dailyMessages.filter(dm => dm.id !== id));
     setEditing(false);
   }
 
   async function updateDailyMessage(id, updatedDailyMessage) {
-    await api.put(`/mensagem/${id}`, updatedDailyMessage);
+    await api.put(`/${id}`, {
+      'author': updatedDailyMessage.author,
+      'message': updatedDailyMessage.message,
+      'date': updatedDailyMessage.date
+    });
 
-    setDailyMessages(dailyMessages.map(dm => (dm._id === id ? updatedDailyMessage : dm)))
+    setDailyMessages(dailyMessages.map(dm => (dm.id === id ? updatedDailyMessage : dm)))
   }
 
   function editRow(editingDailyMessage) {
     setEditing(true)
     setCurrentDailyMessage({
-      _id: editingDailyMessage._id,
+      id: editingDailyMessage.id,
       author: editingDailyMessage.author,
-      dateMessage: editingDailyMessage.dateMessage,
-      dailyMessage: editingDailyMessage.dailyMessage
+      date: editingDailyMessage.date,
+      message: editingDailyMessage.message
     })
   }
 
@@ -77,7 +85,7 @@ function App() {
           <ul>
             {
               dailyMessages.map(item => (
-                <MessageItem key={item._id} data={item} deleteDailyMessage={deleteDailyMessage} editRow={editRow}></MessageItem>
+                <MessageItem key={item.id} data={item} deleteDailyMessage={deleteDailyMessage} editRow={editRow}></MessageItem>
               ))}
           </ul>
         </div>

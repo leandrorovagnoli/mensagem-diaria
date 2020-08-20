@@ -3,16 +3,16 @@ import './style.css';
 
 function MessageForm({ addDailyMessage }) {
     const [author, setAuthor] = useState('');
-    const [dailyMessage, setDailyMessage] = useState('');;
-    const [dateMessage, setDateMessage] = useState('');
+    const [message, setDailyMessage] = useState('');;
+    const [date, setDateMessage] = useState('');
 
     function handleAddSubmit(e) {
         e.preventDefault();
 
         addDailyMessage({
             author,
-            dailyMessage,
-            dateMessage
+            message,
+            date
         });
 
         setAuthor('');
@@ -37,7 +37,7 @@ function MessageForm({ addDailyMessage }) {
                     <textarea name="message"
                         id="message"
                         required
-                        value={dailyMessage}
+                        value={message}
                         onChange={e => setDailyMessage(e.target.value)} />
                 </div>
                 <div className="inputBlock">
@@ -46,7 +46,7 @@ function MessageForm({ addDailyMessage }) {
                         id="date"
                         name="date"
                         required
-                        value={dateMessage}
+                        value={date}
                         onChange={e => setDateMessage(e.target.value)} />
                 </div>
                 <button type="submit">Salvar</button>
