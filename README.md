@@ -25,7 +25,7 @@ O 'Pensamento do Dia' é um projeto que visa motivar seus usuários através de 
 
 Esse projeto foi desenvolvido com as seguintes tecnologias:
 
-- [Node.js](https://nodejs.org/en/)
+- [NET Core 3.1 Web API](https://dotnet.microsoft.com/)
 - [React](https://reactjs.org)
 - [React Native](https://facebook.github.io/react-native/)
 - [MongoDB](https://www.mongodb.com/)
