@@ -25,23 +25,23 @@ function Main(props) {
         const loadDailyMessage = async () => {
             try {
                 // USING LOCAL DATA (JSON FILE)
-                // const currentDate = moment().utc(true).toISOString().substr(0, 10);
-                // const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(currentDate))
+                const currentDate = moment().utc(true).toISOString().substr(0, 10);
+                const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(currentDate))
 
-                // if (dailyMessage != null) {
-                //     setDateMessage(moment.utc(dailyMessage.dateMessage).format('LL'));
-                //     setAuthor(dailyMessage.author);
-                //     setMessageOfTheDay(dailyMessage.dailyMessage);
-                // }
+                if (dailyMessage != null) {
+                    setDateMessage(moment.utc(dailyMessage.dateMessage).format('LL'));
+                    setAuthor(dailyMessage.author);
+                    setMessageOfTheDay(dailyMessage.dailyMessage);
+                }
 
                 // USING API (MONGODB)
-                const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
+                // const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
 
-                if (dailyMessage.data != null && dailyMessage.data.length > 0) {
-                    setDateMessage(moment.utc(dailyMessage.data[0].dateMessage).format('LL'));
-                    setAuthor(dailyMessage.data[0].author);
-                    setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
-                }
+                // if (dailyMessage.data != null && dailyMessage.data.length > 0) {
+                //     setDateMessage(moment.utc(dailyMessage.data[0].dateMessage).format('LL'));
+                //     setAuthor(dailyMessage.data[0].author);
+                //     setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
+                // }
 
                 SplashScreen.hide();
             }
