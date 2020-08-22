@@ -24,29 +24,32 @@ function Main(props) {
 
         const loadDailyMessage = async () => {
             try {
-                // USING LOCAL DATA (JSON FILE)
-                const currentDate = moment().utc(true).toISOString().substr(0, 10);
-                const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(currentDate))
-
-                if (dailyMessage != null) {
-                    setDateMessage(moment.utc(dailyMessage.dateMessage).format('LL'));
-                    setAuthor(dailyMessage.author);
-                    setMessageOfTheDay(dailyMessage.dailyMessage);
-                }
-
                 // USING API (MONGODB)
-                // const dailyMessage = await api.get(`/mensagem/data/${moment().utc(true).toISOString()}`)
+                const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
 
-                // if (dailyMessage.data != null && dailyMessage.data.length > 0) {
-                //     setDateMessage(moment.utc(dailyMessage.data[0].dateMessage).format('LL'));
-                //     setAuthor(dailyMessage.data[0].author);
-                //     setMessageOfTheDay(dailyMessage.data[0].dailyMessage);
-                // }
+                if (dailyMessage.data != null && dailyMessage.data != undefined) {
+                    setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
+                    setAuthor(dailyMessage.data.author);
+                    setMessageOfTheDay(dailyMessage.data.message);
+                }
 
                 SplashScreen.hide();
             }
             catch (e) {
-                throw e;
+                if (e == undefined || e.response == undefined)
+                    throw e;
+
+                if (e.response.status == 404) {
+                    // USING LOCAL DATA (JSON FILE)
+                    const dailyMessage = await dataModel.sort(function() { return .5 - Math.random();})[0];
+                    if (dailyMessage != null) {
+                        setDateMessage(moment.utc().format('LL'));
+                        setAuthor(dailyMessage.author);
+                        setMessageOfTheDay(dailyMessage.dailyMessage);
+                    }
+
+                    SplashScreen.hide();
+                }
             }
         }
 
