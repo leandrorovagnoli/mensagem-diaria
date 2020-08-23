@@ -24,6 +24,7 @@ namespace mensagem_diaria_core.Models
 
         [Required]
         [BsonElement("dateMessage")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc, Representation = BsonType.DateTime)]
         public DateTime Date { get; set; }
     }
 }

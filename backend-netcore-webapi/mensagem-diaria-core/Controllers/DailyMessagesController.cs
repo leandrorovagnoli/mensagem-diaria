@@ -2,7 +2,9 @@
 using mensagem_diaria_core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace mensagem_diaria_core.Controllers
 {
@@ -35,7 +37,7 @@ namespace mensagem_diaria_core.Controllers
         }
 
         [HttpGet("{dateTime:length(10)}", Name = "GetDailyMessageByDate")]
-        public ActionResult<DailyMessage> GetByDate(string dateTime)
+        public ActionResult<DailyMessage> GetByDate(DateTime dateTime)
         {
             var dailyMessage = _dailyMessageService.GetByDate(dateTime);
 
@@ -94,7 +96,7 @@ namespace mensagem_diaria_core.Controllers
         }
 
         [HttpDelete("{dateTime:length(10)}")]
-        public IActionResult DeleteByDate(string dateTime)
+        public IActionResult DeleteByDate(DateTime dateTime)
         {
             var dailyMessage = _dailyMessageService.GetByDate(dateTime);
 

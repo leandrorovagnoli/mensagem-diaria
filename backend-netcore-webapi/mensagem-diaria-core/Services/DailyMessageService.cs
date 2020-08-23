@@ -25,18 +25,12 @@ namespace mensagem_diaria_core.Services
         public DailyMessage Get(string id) =>
             _dailyMessages.Find(dailyMessage => dailyMessage.Id == id).FirstOrDefault();
 
-        public DailyMessage GetByDate(string dateTime)
+        public DailyMessage GetByDate(DateTime dateTime)
         {
-            if (string.IsNullOrEmpty(dateTime))
+            if (dateTime == null)
                 return null;
 
-            var year = Convert.ToInt32(dateTime.Substring(0, 4));
-            var month = Convert.ToInt32(dateTime.Substring(5, 2));
-            var day = Convert.ToInt32(dateTime.Substring(8, 2));
-
-            var date = new DateTime(year, month, day);
-
-            return _dailyMessages.Find(dailyMessage => dailyMessage.Date == date).FirstOrDefault();
+            return _dailyMessages.Find(dailyMessage => dailyMessage.Date >= dateTime && dailyMessage.Date < dateTime.AddDays(1)).FirstOrDefault();
         }
 
         public DailyMessage Create(DailyMessage dailyMessage)
