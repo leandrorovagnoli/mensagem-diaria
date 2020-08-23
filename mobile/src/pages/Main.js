@@ -26,10 +26,10 @@ function Main(props) {
             try {
                 // USING API (MONGODB)
                 const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
-
+                
                 if (dailyMessage.data != null && dailyMessage.data != undefined) {
                     setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
-                    setAuthor(dailyMessage.data.author);
+                    setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
                     setMessageOfTheDay(dailyMessage.data.message);
                 }
 
@@ -38,13 +38,13 @@ function Main(props) {
             catch (e) {
                 if (e == undefined || e.response == undefined)
                     throw e;
-
+                    
                 if (e.response.status == 404) {
                     // USING LOCAL DATA (JSON FILE)
                     const dailyMessage = await dataModel.sort(function() { return .5 - Math.random();})[0];
                     if (dailyMessage != null) {
                         setDateMessage(moment.utc().format('LL'));
-                        setAuthor(dailyMessage.author);
+                        setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
                         setMessageOfTheDay(dailyMessage.dailyMessage);
                     }
 
