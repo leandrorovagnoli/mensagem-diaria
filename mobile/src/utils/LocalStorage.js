@@ -26,7 +26,7 @@ export default {
     async removeItem(key) {
         return await AsyncStorage.removeItem(key);
     },
-    async loadDefaultSettings() {
+    async loadDefaultSettingsAsync() {
         const NOTIFICATION_TIME = await this.getItem('NOTIFICATION_TIME');
         const NOTIFICATION_STATUS = await this.getItem('NOTIFICATION_STATUS');
         const NOTIFICATION_UPDATED = await this.getItem('NOTIFICATION_UPDATED');

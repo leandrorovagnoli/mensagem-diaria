@@ -20,44 +20,43 @@ function Main(props) {
     const [dateMessage, setDateMessage] = useState('')
 
     useEffect(() => {
+        LocalStorage.loadDefaultSettingsAsync();
         SplashScreen.preventAutoHide();
 
         const loadDailyMessage = async () => {
             try {
                 // USING API (MONGODB)
                 const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
-                
+
                 if (dailyMessage.data != null && dailyMessage.data != undefined) {
                     setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
                     setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
                     setMessageOfTheDay(dailyMessage.data.message);
+                    NotificationSystem.scheduleNotification(dailyMessage.data.message)
                 }
 
                 SplashScreen.hide();
             }
             catch (e) {
-                if (e == undefined || e.response == undefined)
-                    throw e;
-                    
-                if (e.response.status == 404) {
-                    // USING LOCAL DATA (JSON FILE)
-                    const dailyMessage = await dataModel.sort(function() { return .5 - Math.random();})[0];
-                    if (dailyMessage != null) {
-                        setDateMessage(moment.utc().format('LL'));
-                        setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
-                        setMessageOfTheDay(dailyMessage.dailyMessage);
-                    }
+                // if (e == undefined || e.response == undefined)
+                //     throw e;
 
-                    SplashScreen.hide();
+                // if (e.response.status == 404) {
+                // USING LOCAL DATA (JSON FILE)
+                const dailyMessage = await dataModel.sort(function () { return .5 - Math.random(); })[0];
+                if (dailyMessage != null) {
+                    setDateMessage(moment.utc().format('LL'));
+                    setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
+                    setMessageOfTheDay(dailyMessage.dailyMessage);
                 }
+
+                SplashScreen.hide();
+                // }
             }
         }
-
-        NotificationSystem.notificationsChannelCreate();
-        LocalStorage.loadDefaultSettings();
+        
         loadDailyMessage();
-        NotificationSystem.askPermissions();
-        NotificationSystem.scheduleNotification(messageOfTheDay)
+        
     }, [])
 
     const shareButton = async () => {
