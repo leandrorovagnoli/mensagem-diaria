@@ -1,12 +1,17 @@
 import * as Notifications from 'expo-notifications';
 import LocalStorage from './LocalStorage';
-import * as Permissions from 'expo-permissions';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import { AndroidNotificationPriority } from 'expo-notifications';
 
 export default {
     async scheduleNotification(dailyMessage) {
+        const NOTIFICATION_STATUS = await LocalStorage.getItem('NOTIFICATION_STATUS');
+        if (!NOTIFICATION_STATUS) {
+            await Notifications.cancelAllScheduledNotificationsAsync();
+            return;
+        }
+
         const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync();
         if (scheduledNotifications != null && scheduledNotifications.length > 0) {
             let NOTIFICATION_UPDATED = await LocalStorage.getItem('NOTIFICATION_UPDATED');

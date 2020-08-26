@@ -33,6 +33,7 @@ function Settings({ route }) {
     const handleToggleEnableDailyNotification = async (value) => {
         setEnableDailyNotification(value);
         await LocalStorage.setItem('NOTIFICATION_STATUS', value);
+        NotificationSystem.scheduleNotification(getMessageOfTheDay());
     }
 
     const onChangeTimePicker = async (event, selectedDate) => {
@@ -43,8 +44,11 @@ function Settings({ route }) {
         await LocalStorage.setItem('NOTIFICATION_TIME', currentDate);
         await LocalStorage.setItem('NOTIFICATION_UPDATED', true);
 
-        const { messageOfTheDay } = route.params;
-        await NotificationSystem.scheduleNotification(messageOfTheDay)
+        await NotificationSystem.scheduleNotification(getMessageOfTheDay())
+    }
+
+    const getMessageOfTheDay = () => {
+        return route.params.messageOfTheDay;
     }
 
     const getLocaleTime = () => {
