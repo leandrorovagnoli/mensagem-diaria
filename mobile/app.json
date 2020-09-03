@@ -8,7 +8,7 @@
       "android"
     ],
     "backgroundColor": "#273A4B",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -27,7 +27,7 @@
     ],
     "android": {
       "package": "com.rovagnolilabs.pensamentododia",
-      "versionCode": 3,
+      "versionCode": 4,
       "backgroundColor": "#273A4B",
       "adaptiveIcon": {
         "foregroundImage": "./assets/iconForegroundImage.png",
