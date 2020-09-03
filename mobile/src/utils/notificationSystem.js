@@ -32,7 +32,7 @@ export default {
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: 'Pensamento do dia',
-                body: String(dailyMessage),
+                body: 'Clique aqui para visualizar a mensagem no app',
                 priority: AndroidNotificationPriority.MAX,
             },
             trigger: {
