@@ -9,7 +9,7 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 import LocalStorage from '../utils/LocalStorage';
 import NotificationSystem from '../utils/notificationSystem';
-import { SplashScreen } from 'expo';
+import * as SplashScreen from 'expo-splash-screen';
 import api from '../services/api';
 import dataModel from '../../src/dataModel.json';
 
@@ -21,42 +21,32 @@ function Main(props) {
 
     useEffect(() => {
         LocalStorage.loadDefaultSettingsAsync();
-        SplashScreen.preventAutoHide();
+        SplashScreen.preventAutoHideAsync();
 
         const loadDailyMessage = async () => {
-            try {
-                // USING API (MONGODB)
-                const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
+            // USING API (MONGODB)
+            // const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
 
-                if (dailyMessage.data != null && dailyMessage.data != undefined) {
-                    setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
-                    setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
-                    setMessageOfTheDay(dailyMessage.data.message);
-                    NotificationSystem.scheduleNotification(dailyMessage.data.message)
-                }
+            // if (dailyMessage.data != null && dailyMessage.data != undefined) {
+            //     setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
+            //     setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
+            //     setMessageOfTheDay(dailyMessage.data.message);
+            //     NotificationSystem.scheduleNotification(dailyMessage.data.message)
+            // }
 
-                SplashScreen.hide();
+            // USING LOCAL DB
+            const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(`${moment().utc(true).toISOString().substring(0, 10)}`));
+            if (dailyMessage != null) {
+                setDateMessage(moment.utc().format('LL'));
+                setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
+                setMessageOfTheDay(dailyMessage.dailyMessage);
             }
-            catch (e) {
-                // if (e == undefined || e.response == undefined)
-                //     throw e;
 
-                // if (e.response.status == 404) {
-                // USING LOCAL DATA (JSON FILE)
-                const dailyMessage = await dataModel.sort(function () { return .5 - Math.random(); })[0];
-                if (dailyMessage != null) {
-                    setDateMessage(moment.utc().format('LL'));
-                    setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
-                    setMessageOfTheDay(dailyMessage.dailyMessage);
-                }
-
-                SplashScreen.hide();
-                // }
-            }
+            await SplashScreen.hideAsync();
         }
-        
+
         loadDailyMessage();
-        
+
     }, [])
 
     const shareButton = async () => {
