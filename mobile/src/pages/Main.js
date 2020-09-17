@@ -24,25 +24,40 @@ function Main(props) {
         SplashScreen.preventAutoHideAsync();
 
         const loadDailyMessage = async () => {
-            // USING API (MONGODB)
-            // const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
+            try {
+                // USING API (MONGODB)
+                // const dailyMessage = await api.get(`/${moment().utc(true).toISOString().substring(0, 10)}`)
 
-            // if (dailyMessage.data != null && dailyMessage.data != undefined) {
-            //     setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
-            //     setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
-            //     setMessageOfTheDay(dailyMessage.data.message);
-            //     NotificationSystem.scheduleNotification(dailyMessage.data.message)
-            // }
+                // if (dailyMessage.data != null && dailyMessage.data != undefined) {
+                //     setDateMessage(moment.utc(dailyMessage.data.date).format('LL'));
+                //     setAuthor(dailyMessage.data.author == "" ? "Desconhecido" : dailyMessage.data.author);
+                //     setMessageOfTheDay(dailyMessage.data.message);
+                //     NotificationSystem.scheduleNotification(dailyMessage.data.message)
+                // }
 
-            // USING LOCAL DB
-            const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(`${moment().utc(true).toISOString().substring(0, 10)}`));
-            if (dailyMessage != null) {
-                setDateMessage(moment.utc().format('LL'));
-                setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
-                setMessageOfTheDay(dailyMessage.dailyMessage);
+                // USING LOCAL DB
+                const dailyMessage = await dataModel.find(x => x.dateMessage.startsWith(`${moment().utc(true).toISOString().substring(0, 10)}`));
+                if (dailyMessage != null) {
+                    setDateMessage(moment.utc().format('LL'));
+                    setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
+                    setMessageOfTheDay(dailyMessage.dailyMessage);
+                }
+                else
+                    throw new Error('Date not found');
+
+                await SplashScreen.hideAsync();
             }
+            catch (e) {
+                // USING RANDOM DATA IN CASE OF ERROR
+                const dailyMessage = await dataModel.sort(function () { return .5 - Math.random(); })[0];
+                if (dailyMessage != null) {
+                    setDateMessage(moment.utc().format('LL'));
+                    setAuthor(dailyMessage.author == "" ? "Desconhecido" : dailyMessage.author);
+                    setMessageOfTheDay(dailyMessage.dailyMessage);
+                }
 
-            await SplashScreen.hideAsync();
+                await SplashScreen.hideAsync();
+            }
         }
 
         loadDailyMessage();
